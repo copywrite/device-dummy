@@ -85,7 +85,7 @@ router.get('/screen/routine', async function(ctx, next) {
         if (color == '158db2') {
           console.log('Target found.')
           await execute('pkill -a -i "Google Chrome"');
-          await sleep(200);
+          await sleep(2000);
           robot.moveMouse(756, 751);
           robot.mouseClick();
         } else {
