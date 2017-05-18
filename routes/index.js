@@ -3,6 +3,7 @@ const osxBrightness = require('osx-brightness');
 var adb = require('adbkit');
 var client = adb.createClient();
 var robot = require("robotjs");
+var exec = require('child_process').exec;
 
 router.get('/', async function(ctx, next) {
   ctx.state = {
@@ -71,6 +72,8 @@ router.get('/screen/routine', async function(ctx, next) {
         console.log('Target color:', color);
         if (color == '158db2') {
           console.log('Target found.')
+          await execute('pkill -a -i "Google Chrome"');
+          await sleep(200);
           robot.moveMouse(756, 751);
           robot.mouseClick();
         } else {
@@ -82,12 +85,14 @@ router.get('/screen/routine', async function(ctx, next) {
     } else if (screenRect.width == 1280 && screenRect.height == 800) {
       var state = robot.getPixelColor(638, 350);
       console.log('State color:', state);
-      if (state == '28b62d') {
+      if (state == '28b62d' || state == '2abb2f') {
         console.log('State is online');
         var color = robot.getPixelColor(640, 652);
         console.log('Target color:', color);
         if (color == '158db2') {
           console.log('Target found.')
+          await execute('pkill -a -i "Google Chrome"');
+          await sleep(200);
           robot.moveMouse(640, 652);
           robot.mouseClick();
         } else {
@@ -138,6 +143,34 @@ var statusParser = function(status) {
       return false;
     }
   }
+}
+
+async function execute(command, debug) {
+  console.log(command);
+  return new Promise((resolve, reject) => {
+    exec(command, function(error, stdout, stderr) {
+      console.log(command + ' executed');
+
+      if (debug) {
+        console.log(stdout);
+        console.log(error);
+        console.log(stderr);
+      }
+
+      {
+        resolve(stdout);
+      }
+    })
+  });
+}
+
+async function sleep(timeout) {
+  return new Promise((resolve, reject) => {
+    setTimeout(function() {
+      console.log('Sleep:' + timeout);
+      resolve();
+    }, timeout);
+  });
 }
 
 module.exports = router;
