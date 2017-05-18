@@ -80,13 +80,13 @@ router.get('/screen/routine', async function(ctx, next) {
         console.log('State is not online');
       }
     } else if (screenRect.width == 1280 && screenRect.height == 800) {
-      var state = robot.getPixelColor(638, 104);
+      var state = robot.getPixelColor(638, 350);
       console.log('State color:', state);
-      if (state == '27b92c') {
+      if (state == '2abb2f') {
         console.log('State is online');
         var color = robot.getPixelColor(640, 652);
         console.log('Target color:', color);
-        if (color == '158cb1') {
+        if (color == '158db2') {
           console.log('Target found.')
           robot.moveMouse(640, 652);
           robot.mouseClick();
