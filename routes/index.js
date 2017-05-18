@@ -4,6 +4,7 @@ var adb = require('adbkit');
 var client = adb.createClient();
 var robot = require("robotjs");
 var exec = require('child_process').exec;
+var directLoginCycle = 0;
 
 router.get('/', async function(ctx, next) {
   ctx.state = {
@@ -58,6 +59,17 @@ router.get('/mobile/toggle', async function(ctx, next) {
 });
 
 router.get('/screen/routine', async function(ctx, next) {
+  directLoginCycle++;
+  console.log('DirectLoginCycle', directLoginCycle);
+
+  if (directLoginCycle > 1) {
+    console.log('DirectLoginCycle stoped.');
+    ctx.body = {
+      routine: false,
+      success: false
+    };
+  }
+
   var screenRect = robot.getScreenSize();
 
   if (screenRect) {
@@ -92,7 +104,7 @@ router.get('/screen/routine', async function(ctx, next) {
         if (color == '158db2') {
           console.log('Target found.')
           await execute('pkill -a -i "Google Chrome"');
-          await sleep(200);
+          await sleep(2000);
           robot.moveMouse(640, 652);
           robot.mouseClick();
         } else {
@@ -113,6 +125,21 @@ router.get('/screen/routine', async function(ctx, next) {
       success: false
     };
   }
+});
+
+router.get('/screen/routine/resetCycle', async function(ctx, next) {
+  directLoginCycle = 0;
+
+  ctx.body = {
+    success: true
+  };
+});
+
+router.get('/screen/routine/cycle', async function(ctx, next) {
+  ctx.body = {
+    directLoginCycle: directLoginCycle,
+    success: true
+  };
 });
 
 async function powerStatus(device) {
