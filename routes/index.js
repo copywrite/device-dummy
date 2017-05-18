@@ -82,7 +82,7 @@ router.get('/screen/routine', async function(ctx, next) {
     } else if (screenRect.width == 1280 && screenRect.height == 800) {
       var state = robot.getPixelColor(638, 350);
       console.log('State color:', state);
-      if (state == '2abb2f') {
+      if (state == '28b62d') {
         console.log('State is online');
         var color = robot.getPixelColor(640, 652);
         console.log('Target color:', color);
