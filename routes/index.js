@@ -2,6 +2,7 @@ var router = require('koa-router')();
 const osxBrightness = require('osx-brightness');
 var adb = require('adbkit');
 var client = adb.createClient();
+var robot = require("robotjs");
 
 router.get('/', async function(ctx, next) {
   ctx.state = {
@@ -53,6 +54,43 @@ router.get('/mobile/toggle', async function(ctx, next) {
     lock: true,
     success: true
   };
+});
+
+router.get('/screen/routine', async function(ctx, next) {
+  var screenRect = robot.getScreenSize();
+
+  if (screenRect) {
+    console.log('Screen Size:', screenRect);
+    var mouse = robot.getMousePos();
+    if (screenRect.width == 1440 && screenRect.height == 900) {
+      var state = robot.getPixelColor(755, 103);
+      console.log('State color:', state);
+      if (state == '2abb2f') {
+        console.log('State is online');
+        var color = robot.getPixelColor(756, 751);
+        console.log('Target color:', color);
+        if (color == '158db2') {
+          console.log('Target found.')
+          robot.moveMouse(756, 751);
+          robot.mouseClick();
+        } else {
+          console.log('Target not found.')
+        }
+      } else {
+        console.log('State is not online');
+      }
+    }
+
+    ctx.body = {
+      routine: true,
+      success: true
+    };
+  } else {
+    ctx.body = {
+      routine: false,
+      success: false
+    };
+  }
 });
 
 async function powerStatus(device) {
