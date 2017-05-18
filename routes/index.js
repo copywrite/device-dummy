@@ -79,6 +79,23 @@ router.get('/screen/routine', async function(ctx, next) {
       } else {
         console.log('State is not online');
       }
+    } else if (screenRect.width == 1280 && screenRect.height == 800) {
+      var state = robot.getPixelColor(638, 104);
+      console.log('State color:', state);
+      if (state == '27b92c') {
+        console.log('State is online');
+        var color = robot.getPixelColor(640, 652);
+        console.log('Target color:', color);
+        if (color == '158cb1') {
+          console.log('Target found.')
+          robot.moveMouse(640, 652);
+          robot.mouseClick();
+        } else {
+          console.log('Target not found.')
+        }
+      } else {
+        console.log('State is not online');
+      }
     }
 
     ctx.body = {
